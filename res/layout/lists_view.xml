@@ -3,12 +3,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-	<Button 
-	    android:id="@+id/main_button_next"
-	    	android:text="Go to next"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content">
-	    
-	</Button>
+
+    <ScrollView
+        android:id="@+id/scrollview_lists_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+    </ScrollView>
 
 </LinearLayout>

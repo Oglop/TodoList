@@ -1,7 +1,13 @@
 package nosafespot.todo;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import nosafespot.todo.containers.TodoList;
+
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -40,6 +46,27 @@ public class DataSource {
 		ContentValues values = new ContentValues();
 	    values.put(SQLiteHelper.COL_1_LISTS_NAME, name);
 	    database.insertOrThrow(SQLiteHelper.TABLE_LISTS, null, values);
+	}
+	
+	/**
+	 * Returns all the todo lists
+	 * @return List<TodoList>
+	 */
+	public List<TodoList> getLists(){
+		List<TodoList> todoList = new ArrayList<TodoList>();
+		Cursor cursor = database.query(SQLiteHelper.TABLE_LISTS,
+				allListColumns, null, null,
+		        null, null, null);
+	    cursor.moveToFirst();
+	    while (cursor.isAfterLast() == false) 
+	    {
+	    	int id = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_0_LISTS_ID));
+	    	String name = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COL_1_LISTS_NAME));
+	    	TodoList item = new TodoList(id, name);
+	    	todoList.add(item);
+	        cursor.moveToNext();
+	    }
+		return todoList;
 	}
 	
 	/**
