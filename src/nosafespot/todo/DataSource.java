@@ -3,6 +3,7 @@ package nosafespot.todo;
 import java.util.ArrayList;
 import java.util.List;
 
+import nosafespot.todo.containers.Entry;
 import nosafespot.todo.containers.TodoList;
 
 import android.content.ContentValues;
@@ -81,5 +82,27 @@ public class DataSource {
 		values.put(SQLiteHelper.COL_3_ENTRYS_CHECKED, "0");
 		database.insertOrThrow(SQLiteHelper.TABLE_ENTRYS, null, values);
 	}
-	
+	/**
+	 * Return all entrys asociated with a list
+	 * @param listid id of the list
+	 * @return List<Entry>
+	 */
+	public List<Entry> getEntrys(int listid){
+		List<Entry> entrys = new ArrayList<Entry>();
+		Cursor cursor = database.query(SQLiteHelper.TABLE_ENTRYS,
+				allEntryColumns, null, null,
+		        null, null, null);
+	    cursor.moveToFirst();
+	    while (cursor.isAfterLast() == false) 
+	    {
+	    	int id = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_0_ENTRYS_ID));
+	    	int listId = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_1_ENTRYS_LIST_ID));
+	    	String name = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COL_2_ENTRYS_NAME));
+	    	int checked = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_3_ENTRYS_CHECKED));
+	    	Entry e = new Entry(id, listId, name, checked);
+	    	entrys.add(e);
+	        cursor.moveToNext();
+	    }
+		return entrys;
+	}
 }

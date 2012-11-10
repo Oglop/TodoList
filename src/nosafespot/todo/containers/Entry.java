@@ -11,11 +11,17 @@ public class Entry {
 	}
 	
 	public Entry(int id, int listId, String name, boolean checked){
-		
+		mID = id;
+		mListID = listId;
+		mName = name;
+		mChecked = checked;
 	}
 	
 	public Entry(int id, int listId, String name, int checked){
-		
+		mID = id;
+		mListID = listId;
+		mName = name;
+		mChecked = (checked == 0) ? false : true;
 	}
 
 	/**

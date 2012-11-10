@@ -18,6 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activitys.EntrysActivity">
+        </activity>
         <activity android:name=".activitys.ListsActivity"></activity>
     </application>
 
