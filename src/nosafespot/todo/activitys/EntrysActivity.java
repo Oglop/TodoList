@@ -37,8 +37,10 @@ public class EntrysActivity extends Activity implements OnClickListener{
 		mID = extras.getInt(Statics.LIST_ID_EXTRA);
 		
 		mDataSource = new DataSource(this);
-		//mEntrys = mDataSource.getEntrys(mID);
-		mEntrys = getTestEntrys();
+		mDataSource.open();
+		mEntrys = mDataSource.getEntrys(mID);
+		mDataSource.close();
+		//mEntrys = getTestEntrys();
 		addEntryItemToScrollView();
 	}
 

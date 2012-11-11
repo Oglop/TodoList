@@ -12,8 +12,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-public class DataSource {
-	
+public class DataSource {	
 	private SQLiteDatabase database;
 	private SQLiteHelper dbHelper;
 	

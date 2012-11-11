@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class ListsActivity extends Activity implements OnClickListener {
@@ -34,15 +35,41 @@ public class ListsActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lists_view);
 		mDataSource = new DataSource(this);
-		//mLists = mDataSource.getLists();
-		mLists = getTestData();
+		mLists = new ArrayList<TodoList>();
+	}
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		refreshScrollView();
+		
+	}
+
+	private void refreshScrollView(){
+		try{
+			mDataSource.open();
+			mLists = mDataSource.getLists();
+			mDataSource.close();
+		}
+		catch(Exception e){
+			//TODO 
+		}
+		ScrollView view = (ScrollView)findViewById(R.id.scrollview_lists_view);
+		if(view.getChildCount() > 0){
+			view.removeAllViews();
+		}
 		addListItemsToScrollView();
 	}
 
 	@Override
 	public void onClick(View view) {
 		if(view.getId() == Statics.ADD_LIST_BUTTON_ID){
-			//TODO Add a new 
+			addButtonPressed();
 		}
 		else{
 			Intent intent = new Intent(this, EntrysActivity.class);
@@ -55,7 +82,7 @@ public class ListsActivity extends Activity implements OnClickListener {
 	 * Adds list items to the list
 	 */
 	private void addListItemsToScrollView(){
-		LinearLayout.LayoutParams llp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		LinearLayout.LayoutParams llp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		llp.weight = 1.0f;
 		View insertPoint = findViewById(R.id.scrollview_lists_view);
 		LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -84,8 +111,8 @@ public class ListsActivity extends Activity implements OnClickListener {
 		linearLayout.addView(v);
 		
 		((ViewGroup) insertPoint).addView(linearLayout, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
-		
-	}
+		insertPoint.refreshDrawableState();
+	}//----addListItemsToScrollView
 	
 	/**
 	 * Returns a add view button to be added last in the view
@@ -103,7 +130,14 @@ public class ListsActivity extends Activity implements OnClickListener {
 			txt.setText("+");
 		}
 		return item;
+	}//--getAddButtonView
+	
+	private void addButtonPressed(){
+		Intent i = new Intent(this, NewListActivity.class);
+		startActivity(i);
+		
 	}
+	
 	
 	private List<TodoList> getTestData(){
 		List<TodoList> testList = new ArrayList<TodoList>();

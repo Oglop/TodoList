@@ -9,6 +9,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class ToDoActivity extends Activity implements OnClickListener{
+	DataSource mDataSource;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -16,9 +18,30 @@ public class ToDoActivity extends Activity implements OnClickListener{
         setContentView(R.layout.main);
         Button b = (Button) findViewById(R.id.main_button_next);
         b.setOnClickListener(this);
-        
+        mDataSource = new DataSource(this);
+        //mDataSource.open();
     }
     
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		
+	}
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		
+	}
+
 
 	@Override
 	public void onClick(View v) {
