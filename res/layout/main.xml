@@ -5,10 +5,8 @@
     android:orientation="vertical" >
 	<Button 
 	    android:id="@+id/main_button_next"
-	    	android:text="Go to next"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content">
-	    
+	    style="@style/button_style"
+    	android:text="@string/to_lists">
 	</Button>
 
 </LinearLayout>

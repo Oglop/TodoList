@@ -21,7 +21,12 @@
         <activity android:name=".activitys.EntrysActivity">
         </activity>
         <activity android:name=".activitys.ListsActivity"></activity>
-        <activity android:name=".activitys.NewListActivity"></activity>
+        <activity android:name=".activitys.NewListActivity"
+            android:theme="@android:style/Theme.Holo.Dialog">
+        </activity>
+        <activity android:name=".activitys.NewEntryActivity"
+            android:theme="@android:style/Theme.Holo.Dialog">
+        </activity>
     </application>
 
 </manifest>

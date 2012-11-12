@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="darktheme_white">#FDFDFD</color>
+    <color name="darktheme_white">#DFDFDF</color>
     <color name="darktheme_black">#131313</color>
     <color name="darktheme_down">#05E9FF</color>
-    
+    <color name="darktheme_warning">#E60066</color>
+    <color name="darktheme_header_blue">#0264A1</color>
 </resources>

@@ -37,7 +37,6 @@ public class DataSource {
 	public void close() {
 	    dbHelper.close();
 	}
-	
 	/**
 	 * insert a new list item to the lists table
 	 * @param name
@@ -47,7 +46,6 @@ public class DataSource {
 	    values.put(SQLiteHelper.COL_1_LISTS_NAME, name);
 	    database.insertOrThrow(SQLiteHelper.TABLE_LISTS, null, values);
 	}
-	
 	/**
 	 * Returns all the todo lists
 	 * @return List<TodoList>
@@ -68,7 +66,28 @@ public class DataSource {
 	    }
 		return todoList;
 	}
-	
+	/**
+	 * Returns the name of a specific list
+	 * @param id list id
+	 * @return name of list
+	 */
+	public String getListName(int id){
+		String name;
+		Cursor cursor = database.query(SQLiteHelper.TABLE_LISTS,
+				allListColumns, SQLiteHelper.COL_0_LISTS_ID + "=?", new String [] { String.valueOf(id) },
+		        null, null, null);
+		cursor.moveToFirst();
+		name = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COL_1_LISTS_NAME));
+		return name;
+	}
+	/**
+	 * Deletes a list and all of the entrys associated with that list
+	 * @param id list id
+	 */
+	public void deleteList(int id){
+		database.delete(SQLiteHelper.TABLE_LISTS, SQLiteHelper.COL_0_LISTS_ID+"=?", new String [] {String.valueOf(id)});
+		database.delete(SQLiteHelper.TABLE_ENTRYS, SQLiteHelper.COL_1_ENTRYS_LIST_ID+"=?", new String [] {String.valueOf(id)});
+	}
 	/**
 	 * insert a new entry to the entry table
 	 * @param name
@@ -89,7 +108,7 @@ public class DataSource {
 	public List<Entry> getEntrys(int listid){
 		List<Entry> entrys = new ArrayList<Entry>();
 		Cursor cursor = database.query(SQLiteHelper.TABLE_ENTRYS,
-				allEntryColumns, null, null,
+				allEntryColumns, SQLiteHelper.COL_1_ENTRYS_LIST_ID + "=?", new String [] { String.valueOf(listid) },
 		        null, null, null);
 	    cursor.moveToFirst();
 	    while (cursor.isAfterLast() == false) 
@@ -104,4 +123,19 @@ public class DataSource {
 	    }
 		return entrys;
 	}
+	
+	
+	/**
+	 * Set checked value of an entry
+	 * @param checked
+	 */
+	public int updateEntryChecked(boolean checked, int id){
+		int i = (checked) ? 1 : 0;
+		ContentValues values = new ContentValues();
+		values.put(SQLiteHelper.COL_3_ENTRYS_CHECKED, i);
+		return database.update(SQLiteHelper.TABLE_ENTRYS, values, 
+				SQLiteHelper.COL_1_ENTRYS_LIST_ID + "=?", 
+				new String []{String.valueOf(id)});
+	}
+	
 }

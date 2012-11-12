@@ -4,4 +4,10 @@
     <string name="create_new_list">Create a new list</string>
     <string name="create_new_entry">Create a new entry</string>
     <string name="ok">OK</string>
+    <string name="to_lists">Go to lists</string>
+    <string name="delete_list">Delete list</string>
+    <string name="remove_checked">Remove checked</string>
+    <string name="title">Title</string>
+    <string name="content_description_arrow_img">Return arrow</string>
+    <string name="my_lists">My lists</string>
 </resources>
