@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="dialog_style" parent="@android:style/Theme.Dialog">
+        <item name="android:background">@color/darktheme_black</item>
+        <item name="android:textColor">@color/darktheme_white</item>
+        <item name="android:button">@drawable/button_drawale</item>
+        
+        <item name="android:bottomBright">@color/darktheme_black</item>
+	    <item name="android:bottomDark">@color/darktheme_black</item>
+	    <item name="android:bottomMedium">@color/darktheme_black</item>
+	    <item name="android:centerBright">@color/darktheme_black</item>
+	    <item name="android:centerDark">@color/darktheme_black</item>
+	    <item name="android:centerMedium">@color/darktheme_black</item>
+	    <item name="android:fullBright">@color/darktheme_black</item>
+	    <item name="android:fullDark">@color/darktheme_black</item>
+	    <item name="android:topBright">@color/darktheme_black</item>
+	    <item name="android:topDark">@color/darktheme_black</item>
+    </style>
+</resources>

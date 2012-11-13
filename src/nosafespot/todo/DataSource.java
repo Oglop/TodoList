@@ -89,6 +89,16 @@ public class DataSource {
 		database.delete(SQLiteHelper.TABLE_ENTRYS, SQLiteHelper.COL_1_ENTRYS_LIST_ID+"=?", new String [] {String.valueOf(id)});
 	}
 	/**
+	 * Deletes entrys that are checked in a list
+	 * @param listId
+	 */
+	public void deleteCheckedEntrys(int listId){
+		String where = SQLiteHelper.COL_1_ENTRYS_LIST_ID + "=?" + " and " +	SQLiteHelper.COL_3_ENTRYS_CHECKED + "=?";
+		String[] selection = new String [] {String.valueOf(listId), String.valueOf(1)};
+		/*TodoTable.COLUMN_ID + "=" + id + " and " + selection*/
+		database.delete(SQLiteHelper.TABLE_ENTRYS, where, selection);
+	}
+	/**
 	 * insert a new entry to the entry table
 	 * @param name
 	 * @param listId
@@ -97,7 +107,7 @@ public class DataSource {
 		ContentValues values = new ContentValues();
 		values.put(SQLiteHelper.COL_1_ENTRYS_LIST_ID, listId);
 		values.put(SQLiteHelper.COL_2_ENTRYS_NAME, name);
-		values.put(SQLiteHelper.COL_3_ENTRYS_CHECKED, "0");
+		values.put(SQLiteHelper.COL_3_ENTRYS_CHECKED, 0);
 		database.insertOrThrow(SQLiteHelper.TABLE_ENTRYS, null, values);
 	}
 	/**
@@ -134,8 +144,30 @@ public class DataSource {
 		ContentValues values = new ContentValues();
 		values.put(SQLiteHelper.COL_3_ENTRYS_CHECKED, i);
 		return database.update(SQLiteHelper.TABLE_ENTRYS, values, 
-				SQLiteHelper.COL_1_ENTRYS_LIST_ID + "=?", 
+				SQLiteHelper.COL_0_ENTRYS_ID + "=?", 
 				new String []{String.valueOf(id)});
+	}
+	/**
+	 * Returns a List with all unchecked entrys
+	 * @return
+	 */
+	public List<Entry> getUncheckedEntrys(){
+		List<Entry> entrys = new ArrayList<Entry>();
+		Cursor cursor = database.query(SQLiteHelper.TABLE_ENTRYS,
+				allEntryColumns, SQLiteHelper.COL_3_ENTRYS_CHECKED + "=?", new String [] { String.valueOf(0)},
+		        null, null, null);
+	    cursor.moveToFirst();
+	    while (cursor.isAfterLast() == false)
+	    {
+	    	int id = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_0_ENTRYS_ID));
+	    	int listId = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_1_ENTRYS_LIST_ID));
+	    	String name = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COL_2_ENTRYS_NAME));
+	    	int checked = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_3_ENTRYS_CHECKED));
+	    	Entry e = new Entry(id, listId, name, checked);
+	    	entrys.add(e);
+	        cursor.moveToNext();
+	    }
+		return entrys;
 	}
 	
 }

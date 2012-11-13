@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Don´t Forgett</string>
+    <string name="app_name">My Todo Lists</string>
     <string name="create_new_list">Create a new list</string>
     <string name="create_new_entry">Create a new entry</string>
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="to_lists">Go to lists</string>
     <string name="delete_list">Delete list</string>
     <string name="remove_checked">Remove checked</string>
     <string name="title">Title</string>
     <string name="content_description_arrow_img">Return arrow</string>
     <string name="my_lists">My lists</string>
+    <string name="items" >Unchecked entrys: </string>
+    <string name="delete_warning">This will permanently delete the list, are you sure?</string>
+    <string name="remove_warning">This will permanently remove all checked entrys, are you sure?</string>
 </resources>

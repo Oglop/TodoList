@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="dark_theme">
+        <item name="android:background">@color/darktheme_black</item>
+        <item name="android:alertDialogStyle">@style/dialog_style</item>
+    </style>
+</resources>

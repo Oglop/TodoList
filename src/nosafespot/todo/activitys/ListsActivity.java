@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
@@ -36,10 +37,20 @@ public class ListsActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.lists_view);
 		mDataSource = new DataSource(this);
 		mLists = new ArrayList<TodoList>();
+		setClickListener();
 	}
 	
 	
 	
+	private void setClickListener() {
+		View view = findViewById(R.id.imgReturnArrow);
+		view.setOnClickListener(this);
+		view = findViewById(R.id.txtTitleBar);
+		view.setOnClickListener(this);
+	}
+
+
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onResume()
 	 */
@@ -70,6 +81,9 @@ public class ListsActivity extends Activity implements OnClickListener {
 	public void onClick(View view) {
 		if(view.getId() == Statics.ADD_LIST_BUTTON_ID){
 			addButtonPressed();
+		}
+		else if(view.getId() == R.id.imgReturnArrow || view.getId() == R.id.txtTitleBar){
+			finish();
 		}
 		else{
 			Intent intent = new Intent(this, EntrysActivity.class);
@@ -137,14 +151,5 @@ public class ListsActivity extends Activity implements OnClickListener {
 		startActivity(i);
 		
 	}
-	
-	
-	private List<TodoList> getTestData(){
-		List<TodoList> testList = new ArrayList<TodoList>();
-		testList.add(new TodoList(0, "Korv"));
-		testList.add(new TodoList(1, "Handla"));
-		testList.add(new TodoList(2, "Ringa"));
-		return testList;
-	}
-	
+
 }

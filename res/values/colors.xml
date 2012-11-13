@@ -5,4 +5,5 @@
     <color name="darktheme_down">#05E9FF</color>
     <color name="darktheme_warning">#E60066</color>
     <color name="darktheme_header_blue">#0264A1</color>
+    <color name="darktheme_faded_grey">#ACACAC</color>
 </resources>
