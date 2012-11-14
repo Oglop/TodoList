@@ -5,12 +5,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLiteHelper extends SQLiteOpenHelper{
-	private static final int DB_VERSION = 1;
+	private static final int DB_VERSION = 2;
 	private static final String DB_NAME = "tododdb";
 	
 	public static final String TABLE_LISTS = "lists";
 	public static final String COL_0_LISTS_ID = "id";
 	public static final String COL_1_LISTS_NAME = "name";
+	public static final String COL_2_LISTS_VIEWS = "views";
 	
 	public static final String TABLE_ENTRYS = "entrys";
 	public static final String COL_0_ENTRYS_ID = "id";
@@ -21,12 +22,13 @@ public class SQLiteHelper extends SQLiteOpenHelper{
 	private static final String DB_CREATE_LISTS = "create table " +
 			TABLE_LISTS + "(" + 
 			COL_0_LISTS_ID	+ " integer primary key autoincrement, " + 
-			COL_1_LISTS_NAME	+ " text);";
+			COL_1_LISTS_NAME + " text, " +
+			COL_2_LISTS_VIEWS + " integer);";
 	
 	private static final String DB_CREATE_ENTRYS = "create table " +
 			TABLE_ENTRYS + "(" + 
 			COL_0_ENTRYS_ID	+ " integer primary key autoincrement, " + 
-			COL_1_ENTRYS_LIST_ID	+ " integer, " +
+			COL_1_ENTRYS_LIST_ID + " integer, " +
 			COL_2_ENTRYS_NAME	+ " text, " +
 			COL_3_ENTRYS_CHECKED + " integer);";
 	

@@ -18,7 +18,8 @@ public class DataSource {
 	
 	private String [] allListColumns = { 
 			SQLiteHelper.COL_0_LISTS_ID, 
-			SQLiteHelper.COL_1_LISTS_NAME};
+			SQLiteHelper.COL_1_LISTS_NAME,
+			SQLiteHelper.COL_2_LISTS_VIEWS};
 	
 	private String [] allEntryColumns = { 
 			SQLiteHelper.COL_0_ENTRYS_ID, 
@@ -50,17 +51,18 @@ public class DataSource {
 	 * Returns all the todo lists
 	 * @return List<TodoList>
 	 */
-	public List<TodoList> getLists(){
+	public List<TodoList> getLists(String orderBy, String descAsc){
 		List<TodoList> todoList = new ArrayList<TodoList>();
 		Cursor cursor = database.query(SQLiteHelper.TABLE_LISTS,
 				allListColumns, null, null,
-		        null, null, null);
+		        null, null, orderBy + descAsc);
 	    cursor.moveToFirst();
 	    while (cursor.isAfterLast() == false) 
 	    {
 	    	int id = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_0_LISTS_ID));
 	    	String name = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COL_1_LISTS_NAME));
-	    	TodoList item = new TodoList(id, name);
+	    	int views = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_2_LISTS_VIEWS));
+	    	TodoList item = new TodoList(id, name, views);
 	    	todoList.add(item);
 	        cursor.moveToNext();
 	    }
@@ -115,11 +117,12 @@ public class DataSource {
 	 * @param listid id of the list
 	 * @return List<Entry>
 	 */
-	public List<Entry> getEntrys(int listid){
+	public List<Entry> getEntrys(int listid, String orderBy, String descAsc){
+		
 		List<Entry> entrys = new ArrayList<Entry>();
 		Cursor cursor = database.query(SQLiteHelper.TABLE_ENTRYS,
 				allEntryColumns, SQLiteHelper.COL_1_ENTRYS_LIST_ID + "=?", new String [] { String.valueOf(listid) },
-		        null, null, null);
+		        null, null, orderBy + descAsc);
 	    cursor.moveToFirst();
 	    while (cursor.isAfterLast() == false) 
 	    {
@@ -155,7 +158,7 @@ public class DataSource {
 		List<Entry> entrys = new ArrayList<Entry>();
 		Cursor cursor = database.query(SQLiteHelper.TABLE_ENTRYS,
 				allEntryColumns, SQLiteHelper.COL_3_ENTRYS_CHECKED + "=?", new String [] { String.valueOf(0)},
-		        null, null, null);
+		        null, null, SQLiteHelper.COL_1_ENTRYS_LIST_ID + Statics.ORDER_ASC);
 	    cursor.moveToFirst();
 	    while (cursor.isAfterLast() == false)
 	    {
@@ -168,6 +171,23 @@ public class DataSource {
 	        cursor.moveToNext();
 	    }
 		return entrys;
+	}
+	
+	public int addOneViewToList(int id){
+		int i = 0;
+		Cursor cursor = database.query(SQLiteHelper.TABLE_LISTS,
+				allListColumns, SQLiteHelper.COL_0_LISTS_ID + "=?", new String [] { String.valueOf(id) },
+		        null, null, null);
+		cursor.moveToFirst();
+		i = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COL_2_LISTS_VIEWS));
+		if(i < Integer.MAX_VALUE){
+			i++;
+		}
+		ContentValues values = new ContentValues();
+		values.put(SQLiteHelper.COL_2_LISTS_VIEWS, i);
+		return database.update(SQLiteHelper.TABLE_LISTS, values, 
+				SQLiteHelper.COL_0_LISTS_ID + "=?", 
+				new String []{String.valueOf(id)});
 	}
 	
 }

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,15 +36,12 @@ public class ToDoActivity extends Activity implements OnClickListener{
         mDataSource = new DataSource(this);
     }
     
-
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onPause()
 	 */
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
-		
 	}
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onResume()
@@ -54,7 +52,6 @@ public class ToDoActivity extends Activity implements OnClickListener{
 		refreshScrollView();
 	}
 
-
 	@Override
 	public void onClick(View v) {
 		Intent intent = null;
@@ -63,9 +60,24 @@ public class ToDoActivity extends Activity implements OnClickListener{
 			startActivity(intent);
 		}
 		else{
+			addOneClickToList(v.getId());
 			intent = new Intent(this, EntrysActivity.class);
 			intent.putExtra(Statics.LIST_ID_EXTRA, v.getId());
 			startActivity(intent);
+		}
+	}
+	
+	private void addOneClickToList(int id){
+		try{
+			mDataSource.open();
+			mDataSource.addOneViewToList(id);
+			
+		}
+		catch(Exception e){
+			Log.d("ERROR", e.getMessage());
+		}
+		finally{
+			mDataSource.close();
 		}
 	}
 	
@@ -76,7 +88,7 @@ public class ToDoActivity extends Activity implements OnClickListener{
 			mDataSource.close();
 		}
 		catch(Exception e){
-			//TODO 
+			Log.d("ERROR", e.getMessage());
 		}
 		ScrollView view = (ScrollView)findViewById(R.id.scrollViewMain);
 		if(view.getChildCount() > 0){
@@ -111,10 +123,10 @@ public class ToDoActivity extends Activity implements OnClickListener{
 			}
 		}
 		catch(SQLException sqlEx){
-			//TODO
+			Log.d("ERROR", sqlEx.getMessage());
 		}
 		catch(Exception e){
-			//TODO
+			Log.d("ERROR", e.getMessage());
 		}
 		finally{
 			mDataSource.close();

@@ -28,11 +28,43 @@
         android:textColor="@color/darktheme_white" />
 
 	</LinearLayout>
+
     <ScrollView
         android:id="@+id/scrollview_entrys_view"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="0dp"
+        android:layout_weight="0.89" >
 
     </ScrollView>
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="46dp"
+	    android:background="@color/darktheme_header_blue"
+	    android:gravity="center_vertical" >
 
+        <TextView
+            android:id="@+id/txtOrderEntryBy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="@string/sort_by"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/txtOrderEntryClause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.99"
+            android:text="@string/Date"
+            android:textAppearance="?android:attr/textAppearanceLarge" 
+            android:layout_marginLeft="4dp"/>
+
+        <ImageView
+            android:id="@+id/imgEntryRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_refresh" 
+            android:contentDescription="@string/content_description_refresh"/>
+    </LinearLayout>
 </LinearLayout>

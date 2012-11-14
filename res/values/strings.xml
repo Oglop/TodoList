@@ -11,7 +11,14 @@
     <string name="title">Title</string>
     <string name="content_description_arrow_img">Return arrow</string>
     <string name="my_lists">My lists</string>
-    <string name="items" >Unchecked entrys: </string>
-    <string name="delete_warning">This will permanently delete the list, are you sure?</string>
+    <string name="items" >Unchecked items: </string>
+    <string name="delete_warning">Permanently delete this list?</string>
     <string name="remove_warning">This will permanently remove all checked entrys, are you sure?</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="Date">Date</string>
+    <string name="Name">Name</string>
+    <string name="Views">Most views</string>
+    <string name="content_description_refresh">Changes how items are ordered and refreshes the list</string>
+    <string name="Newest">Newest</string>
+    <string name="Oldest">Oldest</string>
 </resources>

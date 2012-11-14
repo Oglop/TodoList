@@ -5,17 +5,24 @@ import java.util.List;
 
 import nosafespot.todo.DataSource;
 import nosafespot.todo.R;
+import nosafespot.todo.SQLiteHelper;
 import nosafespot.todo.Statics;
 import nosafespot.todo.containers.TodoList;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -25,8 +32,10 @@ import android.widget.TextView;
 public class ListsActivity extends Activity implements OnClickListener {
 	private List<TodoList> mLists = new ArrayList<TodoList>();
 	private DataSource mDataSource;
-	
-	
+	private Dialog mDialogNewList;
+	private EditText mListEditText;
+	private int mOrderByState;
+	private String mDescAsc;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -35,17 +44,22 @@ public class ListsActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lists_view);
+		mOrderByState = 0;
 		mDataSource = new DataSource(this);
 		mLists = new ArrayList<TodoList>();
 		setClickListener();
 	}
 	
-	
-	
 	private void setClickListener() {
 		View view = findViewById(R.id.imgReturnArrow);
 		view.setOnClickListener(this);
 		view = findViewById(R.id.txtTitleBar);
+		view.setOnClickListener(this);
+		view = findViewById(R.id.txtOrderBy);
+		view.setOnClickListener(this);
+		view = findViewById(R.id.imgRefresh);
+		view.setOnClickListener(this);
+		view = findViewById(R.id.txtOrderClause);
 		view.setOnClickListener(this);
 	}
 
@@ -57,6 +71,8 @@ public class ListsActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		SharedPreferences sharedPrefs = getSharedPreferences(Statics.KEY_PREFERENCES, 0);
+		mOrderByState = sharedPrefs.getInt(Statics.KEY_ORDER_LIST_BY_NUMBER, 0);
 		refreshScrollView();
 		
 	}
@@ -64,7 +80,7 @@ public class ListsActivity extends Activity implements OnClickListener {
 	private void refreshScrollView(){
 		try{
 			mDataSource.open();
-			mLists = mDataSource.getLists();
+			mLists = mDataSource.getLists(getOrderByString(), mDescAsc);
 			mDataSource.close();
 		}
 		catch(Exception e){
@@ -80,15 +96,51 @@ public class ListsActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 		if(view.getId() == Statics.ADD_LIST_BUTTON_ID){
-			addButtonPressed();
+			//addButtonPressed();
+			showNewListDialog();
 		}
 		else if(view.getId() == R.id.imgReturnArrow || view.getId() == R.id.txtTitleBar){
 			finish();
 		}
+		else if(view.getId() == R.id.btnNewListOk){
+			mDialogNewList.dismiss();
+			addNewList();
+			refreshScrollView();
+		}
+		else if(view.getId() == R.id.txtOrderBy ||
+				view.getId() == R.id.txtOrderClause ||
+				view.getId() == R.id.imgRefresh){
+			setOrderByNumber();
+			refreshScrollView();
+		}
 		else{
 			Intent intent = new Intent(this, EntrysActivity.class);
 			intent.putExtra(Statics.LIST_ID_EXTRA, view.getId());
+			mDataSource.open();
+			mDataSource.addOneViewToList(view.getId());
+			mDataSource.close();
 			startActivity(intent);
+		}
+	}
+	
+	private void showNewListDialog(){
+		mDialogNewList = new Dialog(ListsActivity.this, android.R.style.Theme_Translucent);
+		mDialogNewList.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		mDialogNewList.setCancelable(true);
+		mDialogNewList.setContentView(R.layout.new_list_view);
+		Button btnOk = (Button) mDialogNewList.findViewById(R.id.btnNewListOk);
+		btnOk.setOnClickListener(this);
+		mListEditText = (EditText) mDialogNewList.findViewById(R.id.txtNewListName);
+		mDialogNewList.show();
+	}
+	
+	private void addNewList(){
+		String name = mListEditText.getText().toString();
+		if(!name.equals(" ")  && name.length() > 0){
+			mDataSource.open();
+			mDataSource.insertList(name);
+			mDataSource.close();
+			refreshScrollView();
 		}
 	}
 	
@@ -146,10 +198,41 @@ public class ListsActivity extends Activity implements OnClickListener {
 		return item;
 	}//--getAddButtonView
 	
-	private void addButtonPressed(){
-		Intent i = new Intent(this, NewListActivity.class);
-		startActivity(i);
+	private String getOrderByString(){
+		TextView view = (TextView) findViewById(R.id.txtOrderClause);
 		
+		switch(mOrderByState){
+		case 0:
+			view.setText(R.string.Newest);
+			mDescAsc = Statics.ORDER_DESC;
+			return SQLiteHelper.COL_0_LISTS_ID;
+		case 1:
+			view.setText(R.string.Oldest);
+			mDescAsc = Statics.ORDER_ASC;
+			return SQLiteHelper.COL_0_LISTS_ID;
+		case 2:
+			view.setText(R.string.Name);
+			mDescAsc = Statics.ORDER_ASC;
+			return SQLiteHelper.COL_1_LISTS_NAME;
+		case 3:
+			view.setText(R.string.Views);
+			mDescAsc = Statics.ORDER_DESC;
+			return SQLiteHelper.COL_2_LISTS_VIEWS;
+		}
+		view.setText(R.string.Date);
+		return SQLiteHelper.COL_0_LISTS_ID;
+	}
+	
+	private void setOrderByNumber(){
+		SharedPreferences prefs = getSharedPreferences(Statics.KEY_PREFERENCES, 0);
+		SharedPreferences.Editor editor = prefs.edit();
+		switch(mOrderByState){
+			case 0:		mOrderByState = 1;	editor.putInt(Statics.KEY_ORDER_LIST_BY_NUMBER, 1);		break;
+			case 1:		mOrderByState = 2; 	editor.putInt(Statics.KEY_ORDER_LIST_BY_NUMBER, 2);		break;
+			case 2:		mOrderByState = 3; 	editor.putInt(Statics.KEY_ORDER_LIST_BY_NUMBER, 3);		break;
+			case 3:		mOrderByState = 0; 	editor.putInt(Statics.KEY_ORDER_LIST_BY_NUMBER, 0);		break;
+		}
+		editor.commit();
 	}
 
 }

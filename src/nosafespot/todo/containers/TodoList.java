@@ -3,14 +3,16 @@ package nosafespot.todo.containers;
 public class TodoList {
 	private int mID;
 	private String mName;
+	private int mViews;
 	
 	public TodoList(){
-		this(0, "");
+		this(0, "", 0);
 	}
 	
-	public TodoList(int id, String name){
+	public TodoList(int id, String name, int views){
 		mID = id;
 		mName = name;
+		mViews = views;
 	}
 
 	/**
@@ -29,5 +31,13 @@ public class TodoList {
 
 	public int getId(){
 		return mID;
+	}
+
+	public int getViews() {
+		return mViews;
+	}
+
+	public void setViews(int views) {
+		this.mViews = views;
 	}
 }

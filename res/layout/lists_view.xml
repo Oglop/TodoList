@@ -3,36 +3,69 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-	<LinearLayout 
-	    android:layout_width="match_parent"
-	    android:layout_height="46dp"
-	    android:background="@color/darktheme_header_blue"
-	    android:gravity="center_vertical"
-	    android:orientation="horizontal" 
-	    android:layout_marginBottom="10dp">
-	<ImageView
-        android:id="@+id/imgReturnArrow"
-        android:contentDescription="@string/content_description_arrow_img"
-        android:layout_marginLeft="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/return_arrow" />
 
-    <TextView
-        android:id="@+id/txtTitleBar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:text="@string/my_lists"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/darktheme_white" />
+        android:layout_height="46dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/darktheme_header_blue"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
 
-	</LinearLayout>
+        <ImageView
+            android:id="@+id/imgReturnArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:contentDescription="@string/content_description_arrow_img"
+            android:src="@drawable/return_arrow" />
+
+        <TextView
+            android:id="@+id/txtTitleBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/my_lists"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/darktheme_white" />
+    </LinearLayout>
+
     <ScrollView
         android:id="@+id/scrollview_lists_view"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
+        android:layout_height="0dp"
+        android:layout_weight="0.89" >
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@color/darktheme_header_blue"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/txtOrderBy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="@string/sort_by"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/txtOrderClause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="0.99"
+            android:text="@string/Date"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <ImageView
+            android:id="@+id/imgRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_refresh" 
+            android:contentDescription="@string/content_description_refresh"/>
+    </LinearLayout>
 
 </LinearLayout>

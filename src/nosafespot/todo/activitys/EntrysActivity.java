@@ -5,17 +5,13 @@ import java.util.List;
 
 import nosafespot.todo.DataSource;
 import nosafespot.todo.R;
+import nosafespot.todo.SQLiteHelper;
 import nosafespot.todo.Statics;
 import nosafespot.todo.containers.Entry;
-import nosafespot.todo.containers.TodoList;
-import nosafespot.todo.dialogs.ConfirmDialog;
-import android.R.style;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,12 +20,12 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.Toast;
 
 public class EntrysActivity extends Activity implements OnClickListener {
 	private DataSource mDataSource;
@@ -37,6 +33,10 @@ public class EntrysActivity extends Activity implements OnClickListener {
 	private int mID;
 	private Dialog mDialogDelete;
 	private Dialog mDialogRemove;
+	private Dialog mDialogNewEntry;
+	private EditText mEntryEditText;
+	private int mOrderByState;
+	private String mDescAsc;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -45,6 +45,7 @@ public class EntrysActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.entrys_view);
+		mOrderByState = 0;
 		Bundle extras = getIntent().getExtras();
 		mID = extras.getInt(Statics.LIST_ID_EXTRA);
 		mDataSource = new DataSource(this);
@@ -57,14 +58,22 @@ public class EntrysActivity extends Activity implements OnClickListener {
 		view.setOnClickListener(this);
 		view = findViewById(R.id.txtTitleBar);
 		view.setOnClickListener(this);
+		view = findViewById(R.id.txtOrderEntryBy);
+		view.setOnClickListener(this);
+		view = findViewById(R.id.imgEntryRefresh);
+		view.setOnClickListener(this);
+		view = findViewById(R.id.txtOrderEntryClause);
+		view.setOnClickListener(this);
 	}
 
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == Statics.ADD_ENTRY_BUTTON_ID){
-			Intent i = new Intent(this, NewEntryActivity.class);
-			i.putExtra(Statics.LIST_ID_EXTRA, mID);
-			startActivity(i);
+//			Intent i = new Intent(this, NewEntryActivity.class);
+//			i.putExtra(Statics.LIST_ID_EXTRA, mID);
+//			startActivity(i);
+//			addNewEntry();
+			entryButtonClicked();
 		}
 		else if((v.getId() == R.id.btnDeleteList)){
 			showDeleteConfirmDialog();
@@ -89,12 +98,43 @@ public class EntrysActivity extends Activity implements OnClickListener {
 		else if(v.getId() == R.id.btnCancelRemove){
 			mDialogRemove.dismiss();
 		}
+		else if(v.getId() == R.id.btnNewEntryOk){
+			mDialogNewEntry.dismiss();
+			addNewEntry();
+		}
+		else if(v.getId() == R.id.txtOrderEntryBy ||
+				v.getId() == R.id.txtOrderEntryClause ||
+				v.getId() == R.id.imgEntryRefresh){
+			setOrderByNumber();
+			refreshScrollView();
+		}
 		else{
 			//Check uncheck entry
 			setChecked(v);
 		}
 	}
 	
+	private void addNewEntry() {
+		String name = mEntryEditText.getText().toString();
+		if(!name.equals(" ")  && name.length() > 0){
+			mDataSource.open();
+			mDataSource.insertEntry(name, mID);
+			mDataSource.close();
+			refreshScrollView();
+		}
+	}
+
+	private void entryButtonClicked() {
+		mDialogNewEntry = new Dialog(EntrysActivity.this, android.R.style.Theme_Translucent);
+		mDialogNewEntry.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		mDialogNewEntry.setCancelable(true);
+		mDialogNewEntry.setContentView(R.layout.new_entry_view);
+		Button btnOk = (Button) mDialogNewEntry.findViewById(R.id.btnNewEntryOk);
+		btnOk.setOnClickListener(this);
+		mEntryEditText = (EditText) mDialogNewEntry.findViewById(R.id.txtNewEntryName);
+		mDialogNewEntry.show();
+	}
+
 	/**
 	 * sets and updates checked entry, view and db
 	 * @param v
@@ -139,17 +179,22 @@ public class EntrysActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		SharedPreferences sharedPrefs = getSharedPreferences(Statics.KEY_PREFERENCES, 0);
+		mOrderByState = sharedPrefs.getInt(Statics.KEY_ORDER_ENTRY_BY_NUMBER, 0);
 		refreshScrollView();
 	}
 
 	private void refreshScrollView() {
 		try{
 			mDataSource.open();
-			mEntrys = mDataSource.getEntrys(mID);
-			mDataSource.close();
+			mEntrys = mDataSource.getEntrys(mID, getOrderByString(), mDescAsc);
+			
 		}
 		catch(Exception e){
-			//TODO 
+			Log.d("ERROR", e.getMessage());
+		}
+		finally{
+			mDataSource.close();
 		}
 		ScrollView view = (ScrollView)findViewById(R.id.scrollview_entrys_view);
 		if(view.getChildCount() > 0){
@@ -258,6 +303,38 @@ public class EntrysActivity extends Activity implements OnClickListener {
 		btnOk.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);
 		mDialogRemove.show();
+	}
+	
+	private String getOrderByString(){
+		TextView view = (TextView) findViewById(R.id.txtOrderEntryClause);
+		
+		switch(mOrderByState){
+		case 0:
+			view.setText(R.string.Newest);
+			mDescAsc = Statics.ORDER_DESC;
+			return SQLiteHelper.COL_0_ENTRYS_ID;
+		case 1:
+			view.setText(R.string.Oldest);
+			mDescAsc = Statics.ORDER_ASC;
+			return SQLiteHelper.COL_0_ENTRYS_ID;
+		case 2:
+			view.setText(R.string.Name);
+			mDescAsc = Statics.ORDER_ASC;
+			return SQLiteHelper.COL_2_ENTRYS_NAME;
+		}
+		view.setText(R.string.Date);
+		return SQLiteHelper.COL_0_ENTRYS_ID;
+	}
+	
+	private void setOrderByNumber(){
+		SharedPreferences prefs = getSharedPreferences(Statics.KEY_PREFERENCES, 0);
+		SharedPreferences.Editor editor = prefs.edit();
+		switch(mOrderByState){
+			case 0:		mOrderByState = 1;	editor.putInt(Statics.KEY_ORDER_ENTRY_BY_NUMBER, 1);		break;
+			case 1:		mOrderByState = 2; 	editor.putInt(Statics.KEY_ORDER_ENTRY_BY_NUMBER, 2);		break;
+			case 2:		mOrderByState = 0; 	editor.putInt(Statics.KEY_ORDER_ENTRY_BY_NUMBER, 0);		break;
+		}
+		editor.commit();
 	}
 	
 }
